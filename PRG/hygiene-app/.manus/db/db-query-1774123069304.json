@@ -1,0 +1,19 @@
+{
+  "query": "SHOW TABLES LIKE 'temperature_logs'; SHOW TABLES LIKE 'checklist_completions'; SHOW TABLES LIKE 'haccp_points';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3AXTKrwMsW1fG5o.ecb1ef8fcf81 --database HHjyim4eiEtfjyiC3UDciC --execute SHOW TABLES LIKE 'temperature_logs'; SHOW TABLES LIKE 'checklist_completions'; SHOW TABLES LIKE 'haccp_points';",
+  "rows": [
+    {
+      "Tables_in_HHjyim4eiEtfjyiC3UDciC (temperature_logs)": "temperature_logs"
+    },
+    {
+      "Tables_in_HHjyim4eiEtfjyiC3UDciC (temperature_logs)": "Tables_in_HHjyim4eiEtfjyiC3UDciC (checklist_completions)"
+    },
+    {
+      "Tables_in_HHjyim4eiEtfjyiC3UDciC (temperature_logs)": "checklist_completions"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_HHjyim4eiEtfjyiC3UDciC (temperature_logs)\ntemperature_logs\nTables_in_HHjyim4eiEtfjyiC3UDciC (checklist_completions)\nchecklist_completions\n",
+  "stderr": "",
+  "execution_time_ms": 62
+}

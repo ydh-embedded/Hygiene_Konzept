@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1774122837597,
+      "tag": "0000_thick_hannibal_king",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1774122997642,
+      "tag": "0001_hot_lethal_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774123040651,
+      "tag": "0002_orange_groot",
+      "breakpoints": true
+    }
+  ]
+}

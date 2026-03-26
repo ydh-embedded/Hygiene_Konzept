@@ -1,0 +1,9 @@
+{
+  "query": "\nINSERT INTO cleaning_plans (area, task, frequency, cleaningAgent, isActive, createdBy) VALUES\n('Küche', 'Küchenarbeitsflächen reinigen und desinfizieren', 'daily', 'Desinfektionsmittel', true, 1),\n('Küche', 'Küchenboden fegen und wischen', 'daily', 'Bodenreiniger', true, 1),\n('Küche', 'Frittierfett wechseln', 'weekly', NULL, true, 1),\n('Lager', 'Kühlschränke innen reinigen und desinfizieren', 'weekly', 'Desinfektionsmittel', true, 1),\n('Sanitär', 'Gästetoiletten reinigen', 'daily', 'Sanitärreiniger', true, 1),\n('Küche', 'Abzugshaube und Filter reinigen', 'monthly', 'Entfetter', true, 1),\n('Lager', 'Trockenlager aufräumen und Verfallsdaten prüfen', 'weekly', NULL, true, 1),\n('Gastraum', 'Tische und Stühle reinigen', 'daily', 'Oberflächenreiniger', true, 1);\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3AXTKrwMsW1fG5o.ecb1ef8fcf81 --database HHjyim4eiEtfjyiC3UDciC --execute \nINSERT INTO cleaning_plans (area, task, frequency, cleaningAgent, isActive, createdBy) VALUES\n('Küche', 'Küchenarbeitsflächen reinigen und desinfizieren', 'daily', 'Desinfektionsmittel', true, 1),\n('Küche', 'Küchenboden fegen und wischen', 'daily', 'Bodenreiniger', true, 1),\n('Küche', 'Frittierfett wechseln', 'weekly', NULL, true, 1),\n('Lager', 'Kühlschränke innen reinigen und desinfizieren', 'weekly', 'Desinfektionsmittel', true, 1),\n('Sanitär', 'Gästetoiletten reinigen', 'daily', 'Sanitärreiniger', true, 1),\n('Küche', 'Abzugshaube und Filter reinigen', 'monthly', 'Entfetter', true, 1),\n('Lager', 'Trockenlager aufräumen und Verfallsdaten prüfen', 'weekly', NULL, true, 1),\n('Gastraum', 'Tische und Stühle reinigen', 'daily', 'Oberflächenreiniger', true, 1);\n",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 69
+}

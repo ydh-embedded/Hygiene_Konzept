@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE haccp_points ADD COLUMN notes TEXT;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3AXTKrwMsW1fG5o.ecb1ef8fcf81 --database HHjyim4eiEtfjyiC3UDciC --execute ALTER TABLE haccp_points ADD COLUMN notes TEXT;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 344
+}

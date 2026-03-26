@@ -1,0 +1,137 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# HygieneCheck – HACCP Dokumentationssoftware
+# Podman Compose / Docker Compose Konfiguration
+#
+# Dienste:
+#   - app       : Node.js Anwendung (Port 3000)
+#   - db        : MySQL 8.0 Datenbank (Port 3306, intern)
+#   - minio     : S3-kompatibler Objektspeicher für Datei-Uploads (Port 9000/9001)
+#
+# Verwendung:
+#   podman-compose up -d
+#   podman-compose down
+#   podman-compose logs -f app
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Anwendungs-Container ──────────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hygienecheck-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+
+      # Datenbank
+      DATABASE_URL: "mysql://${DB_USER:-hygiene}:${DB_PASSWORD}@db:3306/${DB_NAME:-hygienecheck}"
+
+      # Authentifizierung
+      JWT_SECRET: "${JWT_SECRET}"
+      VITE_APP_ID: "${VITE_APP_ID:-hygienecheck}"
+      OAUTH_SERVER_URL: "${OAUTH_SERVER_URL:-}"
+      VITE_OAUTH_PORTAL_URL: "${VITE_OAUTH_PORTAL_URL:-}"
+      OWNER_OPEN_ID: "${OWNER_OPEN_ID:-}"
+      OWNER_NAME: "${OWNER_NAME:-Administrator}"
+
+      # S3 / MinIO Objektspeicher
+      AWS_ENDPOINT_URL: "http://minio:9000"
+      AWS_ACCESS_KEY_ID: "${MINIO_ROOT_USER:-minioadmin}"
+      AWS_SECRET_ACCESS_KEY: "${MINIO_ROOT_PASSWORD}"
+      AWS_REGION: "us-east-1"
+      AWS_BUCKET_NAME: "${MINIO_BUCKET:-hygienecheck}"
+
+      # Forge API (optional – für LLM/Benachrichtigungen)
+      BUILT_IN_FORGE_API_URL: "${BUILT_IN_FORGE_API_URL:-}"
+      BUILT_IN_FORGE_API_KEY: "${BUILT_IN_FORGE_API_KEY:-}"
+      VITE_FRONTEND_FORGE_API_URL: "${VITE_FRONTEND_FORGE_API_URL:-}"
+      VITE_FRONTEND_FORGE_API_KEY: "${VITE_FRONTEND_FORGE_API_KEY:-}"
+
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - hygienecheck-net
+    volumes:
+      - app-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ── MySQL Datenbank ───────────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: hygienecheck-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${DB_NAME:-hygienecheck}"
+      MYSQL_USER: "${DB_USER:-hygiene}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - hygienecheck-net
+    # Port nach außen nur bei Bedarf freigeben (für Datenbankadmin-Tools)
+    # ports:
+    #   - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USER:-hygiene}", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+
+  # ── MinIO (S3-kompatibler Objektspeicher) ─────────────────────────────────
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: hygienecheck-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ROOT_USER:-minioadmin}"
+      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD}"
+    volumes:
+      - minio-data:/data
+    networks:
+      - hygienecheck-net
+    ports:
+      # MinIO API (S3-kompatibel) – intern genutzt, extern optional
+      - "${MINIO_API_PORT:-9000}:9000"
+      # MinIO Web-Konsole
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+# ── Netzwerk ──────────────────────────────────────────────────────────────────
+networks:
+  hygienecheck-net:
+    driver: bridge
+
+# ── Volumes ───────────────────────────────────────────────────────────────────
+volumes:
+  db-data:
+    driver: local
+  minio-data:
+    driver: local
+  app-logs:
+    driver: local
